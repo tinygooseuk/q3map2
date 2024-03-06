@@ -1,3 +1,8 @@
 * Q3Map2
 
 This program takes an idTech3-style  /.map/ file and spits out a /.bsp/ file suitable for loading into many different engines based on idTech3. 
+
+Modified by Tiny Goose for the Tremble Unity Asset.
+Changes:
+- Add support for "Valve 220" format maps.
+- Remove dependency on WebP (we only use PNG)
