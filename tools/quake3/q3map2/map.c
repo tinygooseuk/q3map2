@@ -1062,17 +1062,56 @@ static void ParseRawBrush( qboolean onlyLights ){
 		strcpy( name, token );
 
 		/* bp */
+/* @@@ BEGIN TINYGOOSE EDIT */
+/* Check for Valve-format maps - with [x, x, x, tx] [y, y, y, ty] instead of just tx ty*/
+        qboolean isValve = qfalse;
+
 		if ( g_bBrushPrimit == BPRIMIT_OLDBRUSHES ) {
-			GetToken( qfalse );
-			shift[ 0 ] = atof( token );
-			GetToken( qfalse );
-			shift[ 1 ] = atof( token );
-			GetToken( qfalse );
-			rotate = atof( token );
-			GetToken( qfalse );
-			scale[ 0 ] = atof( token );
-			GetToken( qfalse );
-			scale[ 1 ] = atof( token );
+            GetToken(qfalse);
+            isValve = token[0] == '[';
+            UnGetToken();
+            
+            if (isValve)
+            {
+                for ( int axis = 0; axis < 2; ++axis ){
+                    MatchToken( "[" );
+            
+                    for ( int comp = 0; comp < 4; ++comp ){
+                        GetToken( qfalse );
+                        side->vecs[axis][comp] = atof( token );
+                    }
+                    MatchToken( "]" );
+                }
+                GetToken( qfalse ); // rotate
+                float scale[2];
+                GetToken( qfalse );
+                scale[ 0 ] = atof( token );
+                GetToken( qfalse );
+                scale[ 1 ] = atof( token );
+
+                if ( !scale[0] ) scale[0] = 1.f;
+                if ( !scale[1] ) scale[1] = 1.f;
+                for ( int axis = 0; axis < 2; ++axis )
+                {
+                    side->vecs[axis][0] /= scale[axis];
+                    side->vecs[axis][1] /= scale[axis];
+                    side->vecs[axis][2] /= scale[axis];
+                }
+            }
+            else
+            {
+                shift[ 0 ] = atof( token );
+                GetToken( qfalse );
+                shift[ 1 ] = atof( token );
+                
+                GetToken( qfalse );
+                rotate = atof( token );
+                GetToken( qfalse );
+                scale[ 0 ] = atof( token );
+                GetToken( qfalse );
+                scale[ 1 ] = atof( token );
+            }
+/* @@@ END TINYGOOSE EDIT */
 		}
 
 		/* set default flags and values */
@@ -1089,11 +1128,15 @@ static void ParseRawBrush( qboolean onlyLights ){
 		side->compileFlags = si->compileFlags;
 		side->value = si->value;
 
-		/* ydnar: gs mods: bias texture shift */
-		if ( si->globalTexture == qfalse ) {
-			shift[ 0 ] -= ( floor( shift[ 0 ] / si->shaderWidth ) * si->shaderWidth );
-			shift[ 1 ] -= ( floor( shift[ 1 ] / si->shaderHeight ) * si->shaderHeight );
-		}
+/* @@@ BEGIN TINYGOOSE EDIT */
+        if (!isValve) {
+            /* ydnar: gs mods: bias texture shift */
+            if ( si->globalTexture == qfalse ) {
+                shift[ 0 ] -= ( floor( shift[ 0 ] / si->shaderWidth ) * si->shaderWidth );
+                shift[ 1 ] -= ( floor( shift[ 1 ] / si->shaderHeight ) * si->shaderHeight );
+            }
+        }
+/* @@@ END TINYGOOSE EDIT */
 
 		/*
 		    historically, there are 3 integer values at the end of a brushside line in a .map file.
@@ -1125,10 +1168,14 @@ static void ParseRawBrush( qboolean onlyLights ){
 		planenum = MapPlaneFromPoints( planePoints );
 		side->planenum = planenum;
 
-		/* bp: get the texture mapping for this texturedef / plane combination */
-		if ( g_bBrushPrimit == BPRIMIT_OLDBRUSHES ) {
-			QuakeTextureVecs( &mapplanes[ planenum ], shift, rotate, scale, side->vecs );
-		}
+/* @@@ BEGIN TINYGOOSE EDIT */
+        if (!isValve) {
+            /* bp: get the texture mapping for this texturedef / plane combination */
+            if ( g_bBrushPrimit == BPRIMIT_OLDBRUSHES ) {
+                QuakeTextureVecs( &mapplanes[ planenum ], shift, rotate, scale, side->vecs );
+            }
+        }
+/* @@@ END TINYGOOSE EDIT */
 	}
 
 	/* bp */

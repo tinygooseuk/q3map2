@@ -121,6 +121,7 @@ radiant_tool(q3map2
         )
 
 target_link_libraries(q3map2
+        ${GLIB_LDFLAGS}
         ${GLIB_LIBRARIES}
         ${JPEG_LIBRARIES}
         ${PNG_LIBRARIES}

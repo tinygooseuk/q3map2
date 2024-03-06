@@ -234,7 +234,9 @@ static void LoadPNGBuffer( byte *buffer, int size, byte **pixels, int *width, in
  */
 
 static void LoadWEBPBuffer( byte *buffer, int size, byte **pixels, int *width, int *height ){
-
+/* @@@ BEGIN TINYGOOSE EDIT */
+/* Remove support for WEBP to remove dependency on it (we don't use it!)  */
+/* 
 	int image_width;
 	int image_height;
 	
@@ -256,7 +258,9 @@ static void LoadWEBPBuffer( byte *buffer, int size, byte **pixels, int *width, i
         {
 		Sys_Printf( "WARNING: An error occurred reading WEBP image\n" );
                 return;
-        }       
+        }   
+*/
+/* @@@ END TINYGOOSE EDIT */
 }
 
 
