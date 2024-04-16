@@ -119,8 +119,6 @@ target_link_libraries(q3map2
         ${PNG_LIBRARIES}
         ${LIBXML2_LIBRARIES}
         ${ZLIB_LIBRARIES}
-        ddslib
-        etclib
         filematch
         l_net
         mathlib

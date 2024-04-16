@@ -23,7 +23,6 @@
 
 #include "inout.h"
 #include "cmdlib.h"
-#include "etclib.h"
 #include "imagelib.h"
 #include "vfs.h"
 
@@ -1389,46 +1388,6 @@ static const KTX_UncompressedFormat_t KTX_UncompressedFormats[] =
 	{ 0, 0, 0, NULL }
 };
 
-static qboolean KTX_DecodeETC1( const byte* in, size_t inSize, unsigned int width, unsigned int height, byte* out ){
-	unsigned int y, stride = width * 4;
-	byte rgba[64];
-
-	if ( inSize < ( ( ( ( width + 3 ) & ~3 ) * ( ( height + 3 ) & ~3 ) ) >> 1 ) ) {
-		return qfalse;
-	}
-
-	for ( y = 0; y < height; y += 4, out += stride * 4 )
-	{
-		byte *p;
-		unsigned int x, blockrows;
-
-		blockrows = height - y;
-		if ( blockrows > 4 ) {
-			blockrows = 4;
-		}
-
-		p = out;
-		for ( x = 0; x < width; x += 4, p += 16 )
-		{
-			unsigned int blockrowsize, blockrow;
-
-			ETC_DecodeETC1Block( in, rgba, qtrue );
-			in += 8;
-
-			blockrowsize = width - x;
-			if ( blockrowsize > 4 ) {
-				blockrowsize = 4;
-			}
-			blockrowsize *= 4;
-			for ( blockrow = 0; blockrow < blockrows; blockrow++ )
-			{
-				memcpy( p + blockrow * stride, rgba + blockrow * 16, blockrowsize );
-			}
-		}
-	}
-
-	return qtrue;
-}
 
 #define KTX_HEADER_UINT32( buf ) ( bigEndian ? KTX_UINT32_BE( buf ) : KTX_UINT32_LE( buf ) )
 
@@ -1519,9 +1478,6 @@ void LoadKTXBufferFirstImage( const byte *buffer, size_t bufSize, byte **pic, in
 
 		switch ( format )
 		{
-		case KTX_FORMAT_ETC1_RGB8:
-			decoded = KTX_DecodeETC1( buffer, bufSize, width, height, pixels );
-			break;
 		default:
 			Error( "LoadKTX: Image has an unsupported compressed format format 0x%X", format );
 			break;
