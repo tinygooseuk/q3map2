@@ -16,9 +16,6 @@ add_definitions(-DQ3MAP_VERSION="${Q3MAP_VERSION}")
 find_package(GLIB REQUIRED)
 include_directories(${GLIB_INCLUDE_DIRS})
 
-find_package(JPEG REQUIRED)
-include_directories(${JPEG_INCLUDE_DIR})
-
 find_package(PNG REQUIRED)
 include_directories(${PNG_INCLUDE_DIR})
 
@@ -27,9 +24,6 @@ include_directories(${LIBXML2_INCLUDE_DIR})
 
 find_package(ZLIB REQUIRED)
 include_directories(${ZLIB_INCLUDE_DIRS})
-
-find_package(WEBP REQUIRED)
-include_directories(${WEBP_INCLUDE_DIRS})
 
 set(q3map2_games
         q3map2/game_darkplaces.h
@@ -57,7 +51,6 @@ radiant_tool(q3map2
         common/cmdlib.c common/cmdlib.h
         common/imagelib.c common/imagelib.h
         common/inout.c common/inout.h
-        common/jpeg.c
         common/md4.c common/md4.h
         common/mutex.c common/mutex.h
         common/polylib.c common/polylib.h
@@ -123,11 +116,9 @@ radiant_tool(q3map2
 target_link_libraries(q3map2
         ${GLIB_LDFLAGS}
         ${GLIB_LIBRARIES}
-        ${JPEG_LIBRARIES}
         ${PNG_LIBRARIES}
         ${LIBXML2_LIBRARIES}
         ${ZLIB_LIBRARIES}
-        ${WEBP_LIBRARIES}
         ddslib
         etclib
         filematch
@@ -136,44 +127,9 @@ target_link_libraries(q3map2
         picomodel
         )
 
-radiant_tool(q3data
-        common/aselib.c common/aselib.h
-        common/bspfile.c common/bspfile.h
-        common/cmdlib.c common/cmdlib.h
-        common/imagelib.c common/imagelib.h
-        common/inout.c common/inout.h
-        common/md4.c common/md4.h
-        common/scriplib.c common/scriplib.h
-        common/trilib.c common/trilib.h
-        common/unzip.c common/unzip.h
-        common/vfs.c common/vfs.h
-
-        q3data/3dslib.c q3data/3dslib.h
-        q3data/compress.c
-        q3data/images.c
-        q3data/md3lib.c q3data/md3lib.h
-        q3data/models.c
-        q3data/p3dlib.c q3data/p3dlib.h
-        q3data/polyset.c
-        q3data/q3data.c q3data/q3data.h
-        q3data/stripper.c
-        q3data/video.c
-        )
-
-target_link_libraries(q3data
-        ${GLIB_LIBRARIES}
-        ${LIBXML2_LIBRARIES}
-        ${ZLIB_LIBRARIES}
-        filematch
-        etclib
-        l_net
-        mathlib
-        )
-
 add_custom_target(quake3)
-add_dependencies(quake3 q3map2 q3data)
+add_dependencies(quake3 q3map2)
 
 if (UNIX)
     target_link_libraries(q3map2 pthread m)
-    target_link_libraries(q3data m)
 endif ()

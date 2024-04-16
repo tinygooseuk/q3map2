@@ -246,7 +246,7 @@ static void LoadWEBPBuffer( byte *buffer, int size, byte **pixels, int *width, i
 		return;
 	}
 	    
-	/* create image pixel buffer */
+	/*create image pixel buffer 
 	*pixels = safe_malloc( image_width * image_height * 4 );
 	*width = image_width;
 	*height = image_height;
@@ -374,7 +374,6 @@ image_t *ImageLoad( const char *filename ){
 	char name[ 1024 ];
 	int size;
 	byte        *buffer = NULL;
-	qboolean alphaHack = qfalse;
 
 
 	/* init */
@@ -431,65 +430,6 @@ image_t *ImageLoad( const char *filename ){
 		if ( size > 0 ) {
 			LoadPNGBuffer( buffer, size, &image->pixels, &image->width, &image->height );
 		}
-		else
-		{
-			/* attempt to load jpg */
-			StripExtension( name );
-			strcat( name, ".jpg" );
-			size = vfsLoadFile( (const char*) name, (void**) &buffer, 0 );
-			if ( size > 0 ) {
-				if ( LoadJPGBuff( buffer, size, &image->pixels, &image->width, &image->height ) == -1 && image->pixels != NULL ) {
-					// On error, LoadJPGBuff might store a pointer to the error message in image->pixels
-					Sys_Printf( "WARNING: LoadJPGBuff %s %s\n", name, (unsigned char*) image->pixels );
-				}
-				alphaHack = qtrue;
-			}
-			else
-			{
-				/* attempt to load dds */
-				StripExtension( name );
-				strcat( name, ".dds" );
-				size = vfsLoadFile( (const char*) name, (void**) &buffer, 0 );
-				if ( size > 0 ) {
-					LoadDDSBuffer( buffer, size, &image->pixels, &image->width, &image->height );
-
-					/* debug code */
-					#if 1
-					{
-						ddsPF_t pf;
-						DDSGetInfo( (ddsBuffer_t*) buffer, NULL, NULL, &pf );
-						Sys_Printf( "pf = %d\n", pf );
-						if ( image->width > 0 ) {
-							StripExtension( name );
-							strcat( name, "_converted.tga" );
-							WriteTGA( "C:\\games\\quake3\\baseq3\\textures\\rad\\dds_converted.tga", image->pixels, image->width, image->height );
-						}
-					}
-					#endif
-				}
-				else
-				{
-					/* attempt to load ktx */
-					StripExtension( name );
-					strcat( name, ".ktx" );
-					size = vfsLoadFile( (const char*) name, (void**) &buffer, 0 );
-					if ( size > 0 ) {
-						LoadKTXBufferFirstImage( buffer, size, &image->pixels, &image->width, &image->height );
-					}
-          else
-          {
-            /* attempt to load webp */
-            StripExtension( name );
-            strcat( name, ".webp" );
-            size = vfsLoadFile( (const char*) name, (void**) &buffer, 0 );
-            if ( size > 0 )
-            {
-              LoadWEBPBuffer( buffer, size, &image->pixels, &image->width, &image->height );
-            }
-          }
-				}
-			}
-		}
 	}
 
 	/* free file buffer */
@@ -511,30 +451,6 @@ image_t *ImageLoad( const char *filename ){
 	/* set count */
 	image->refCount = 1;
 	numImages++;
-
-	if ( alphaHack ) {
-		StripExtension( name );
-		strcat( name, "_alpha.jpg" );
-		size = vfsLoadFile( (const char*) name, (void**) &buffer, 0 );
-		if ( size > 0 ) {
-			unsigned char *pixels;
-			int width, height;
-			if ( LoadJPGBuff( buffer, size, &pixels, &width, &height ) == -1 ) {
-				if (pixels) {
-					// On error, LoadJPGBuff might store a pointer to the error message in pixels
-					Sys_Printf( "WARNING: LoadJPGBuff %s %s\n", name, (unsigned char*) pixels );
-				}				
-			} else {
-				if ( width == image->width && height == image->height ) {
-					int i;
-					for ( i = 0; i < width * height; ++i )
-						image->pixels[4 * i + 3] = pixels[4 * i + 2];  // copy alpha from blue channel
-				}
-				free( pixels );
-			}
-			free( buffer );
-		}
-	}
 
 	/* return the image */
 	return image;
