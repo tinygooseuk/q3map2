@@ -29,21 +29,6 @@
 
 #if defined ( _MSC_VER )
 
-inline int lrint( double flt ){
-	int i;
-
-	_asm
-	{
-		fld flt
-		fistp i
-	};
-
-	return i;
-}
-
-inline __int64 llrint( double f ){
-	return static_cast<__int64>( f + 0.5 );
-}
 
 #elif defined( __FreeBSD__ )
 

@@ -100,6 +100,8 @@
 
 #if 1
 	#ifdef WIN32
+		#define MAC_STATIC          static
+
 		#define Q_stricmp           stricmp
 		#define Q_strncasecmp       strnicmp
 	#else

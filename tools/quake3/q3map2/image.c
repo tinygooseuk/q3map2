@@ -211,8 +211,6 @@ image_t *ImageFind( const char *filename ){
  */
 
 image_t *ImageLoad( const char *filename ){
-	Sys_FPrintf(SYS_ERR, "Loading image %s\n", filename);
-
 	int i;
 	image_t     *image;
 	char name[ 1024 ];
@@ -273,7 +271,6 @@ image_t *ImageLoad( const char *filename ){
 		size = vfsLoadFile( (const char*) name, (void**) &buffer, 0 );
 		if ( size > 0 ) {
 			LoadPNGBuffer( buffer, size, &image->pixels, &image->width, &image->height );
-			Sys_FPrintf(SYS_ERR, "PNG size %dx%d\n", image->width, image->height);
 		}
 	}
 

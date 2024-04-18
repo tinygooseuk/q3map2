@@ -54,6 +54,10 @@
 #include "vfs.h"
 #include "unzip.h"
 
+#if !defined( uint32_t )
+typedef unsigned int uint32_t;
+#endif
+
 typedef struct
 {
 	char*   name;
