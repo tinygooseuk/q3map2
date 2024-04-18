@@ -81,7 +81,6 @@
 #include "qthreads.h"
 #include "inout.h"
 #include "vfs.h"
-#include "png.h"
 #include "md4.h"
 #include <stdlib.h>
 
@@ -112,6 +111,9 @@
 /* macro version */
 #define VectorMA( a, s, b, c )  ( ( c )[ 0 ] = ( a )[ 0 ] + ( s ) * ( b )[ 0 ], ( c )[ 1 ] = ( a )[ 1 ] + ( s ) * ( b )[ 1 ], ( c )[ 2 ] = ( a )[ 2 ] + ( s ) * ( b )[ 2 ] )
 
+
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#define MAX(x, y) ((x) > (y) ? (x) : (y)) 
 
 
 /* -------------------------------------------------------------------------------

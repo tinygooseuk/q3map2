@@ -43,9 +43,9 @@
 #define S_ISDIR( mode ) ( mode & _S_IFDIR )
 #define PATH_MAX 260
 #endif
-#include <glib.h>
 
 #define VFS_MAXDIRS 64
+#define VFS_MAXFILES 4096
 
 void vfsInitDirectory( const char *path );
 void vfsShutdown();

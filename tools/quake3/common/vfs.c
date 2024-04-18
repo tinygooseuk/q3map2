@@ -44,6 +44,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <dirent.h> 
+
 
 #include "cmdlib.h"
 #include "filematch.h"
@@ -57,19 +59,24 @@ typedef struct
 	char*   name;
 	unz_s zipinfo;
 	unzFile zipfile;
-	guint32 size;
+	uint32_t size;
 } VFS_PAKFILE;
+
+#define STR_DOWN(X) do { for (char* p = (X); *p; ++p) *p = tolower(*p); } while(0)
 
 // =============================================================================
 // Global variables
 
-static GSList*  g_unzFiles;
-static GSList*  g_pakFiles;
+static unzFile  g_unzFiles[VFS_MAXFILES];
+static int  g_unzFileCount = 0;
+static VFS_PAKFILE*  g_pakFiles[VFS_MAXFILES];
+static int  g_pakFileCount = 0;
+
 static char g_strDirs[VFS_MAXDIRS][PATH_MAX + 1];
 static int g_numDirs;
 char g_strForbiddenDirs[VFS_MAXDIRS][PATH_MAX + 1];
 int g_numForbiddenDirs = 0;
-static gboolean g_bUsePak = TRUE;
+static qboolean g_bUsePak = qtrue;
 
 // =============================================================================
 // Static functions
@@ -103,7 +110,7 @@ static void vfsFixDOSName( char *src ){
 static void vfsInitPakFile( const char *filename ){
 	unz_global_info gi;
 	unzFile uf;
-	guint32 i;
+	uint32_t i;
 	int err;
 
 	uf = unzOpen( filename );
@@ -111,7 +118,7 @@ static void vfsInitPakFile( const char *filename ){
 		return;
 	}
 
-	g_unzFiles = g_slist_append( g_unzFiles, uf );
+	g_unzFiles[g_unzFileCount++] = uf;
 
 	err = unzGetGlobalInfo( uf,&gi );
 	if ( err != UNZ_OK ) {
@@ -131,10 +138,10 @@ static void vfsInitPakFile( const char *filename ){
 		}
 
 		file = (VFS_PAKFILE*)safe_malloc( sizeof( VFS_PAKFILE ) );
-		g_pakFiles = g_slist_append( g_pakFiles, file );
+		g_pakFiles[g_pakFileCount++] = file;
 
 		vfsFixDOSName( filename_inzip );
-		g_strdown( filename_inzip );
+		STR_DOWN( filename_inzip );
 
 		file->name = strdup( filename_inzip );
 		file->size = file_info.uncompressed_size;
@@ -157,22 +164,22 @@ static void vfsInitPakFile( const char *filename ){
 void vfsInitDirectory( const char *path ){
 	char filename[PATH_MAX];
 	char *dirlist;
-	GDir *dir;
+	DIR *dir;
 	int j;
 
 	for ( j = 0; j < g_numForbiddenDirs; ++j )
 	{
-		char* dbuf = g_strdup( path );
+		char* dbuf = strdup( path );
 		if ( *dbuf && dbuf[strlen( dbuf ) - 1] == '/' ) {
 			dbuf[strlen( dbuf ) - 1] = 0;
 		}
 		const char *p = strrchr( dbuf, '/' );
 		p = ( p ? ( p + 1 ) : dbuf );
-		if ( matchpattern( p, g_strForbiddenDirs[j], TRUE ) ) {
-			g_free( dbuf );
+		if ( matchpattern( p, g_strForbiddenDirs[j], qtrue ) ) {
+			free( dbuf );
 			break;
 		}
-		g_free( dbuf );
+		free( dbuf );
 	}
 	if ( j < g_numForbiddenDirs ) {
 		return;
@@ -191,12 +198,13 @@ void vfsInitDirectory( const char *path ){
 	g_numDirs++;
 
 	if ( g_bUsePak ) {
-		dir = g_dir_open( path, 0, NULL );
+		dir = opendir( path );
 
 		if ( dir != NULL ) {
-			while ( 1 )
+			struct dirent* d = NULL;
+			while ((d = readdir(dir)) != NULL)
 			{
-				const char* name = g_dir_read_name( dir );
+				const char* name = d->d_name;
 				if ( name == NULL ) {
 					break;
 				}
@@ -205,7 +213,7 @@ void vfsInitDirectory( const char *path ){
 				{
 					const char *p = strrchr( name, '/' );
 					p = ( p ? ( p + 1 ) : name );
-					if ( matchpattern( p, g_strForbiddenDirs[j], TRUE ) ) {
+					if ( matchpattern( p, g_strForbiddenDirs[j], qtrue ) ) {
 						break;
 					}
 				}
@@ -213,7 +221,7 @@ void vfsInitDirectory( const char *path ){
 					continue;
 				}
 
-				dirlist = g_strdup( name );
+				dirlist = strdup( name );
 
 				{
 					char *ext = strrchr( dirlist, '.' );
@@ -236,28 +244,27 @@ void vfsInitDirectory( const char *path ){
 
 				sprintf( filename, "%s/%s", path, dirlist );
 				vfsInitPakFile( filename );
-
-				g_free( dirlist );
 			}
-			g_dir_close( dir );
+			closedir( dir );
 		}
 	}
 }
 
 // frees all memory that we allocated
 void vfsShutdown(){
-	while ( g_unzFiles )
+	while ( g_unzFileCount > 0)
 	{
-		unzClose( (unzFile)g_unzFiles->data );
-		g_unzFiles = g_slist_remove( g_unzFiles, g_unzFiles->data );
+		unzClose( (unzFile)g_unzFiles[g_unzFileCount-1] );
+		g_unzFileCount--;
 	}
 
-	while ( g_pakFiles )
+	while ( g_pakFileCount > 0 )
 	{
-		VFS_PAKFILE* file = (VFS_PAKFILE*)g_pakFiles->data;
+		VFS_PAKFILE* file = g_pakFiles[g_pakFileCount-1];
 		free( file->name );
 		free( file );
-		g_pakFiles = g_slist_remove( g_pakFiles, file );
+
+		g_pakFileCount--;
 	}
 }
 
@@ -265,15 +272,14 @@ void vfsShutdown(){
 int vfsGetFileCount( const char *filename ){
 	int i, count = 0;
 	char fixed[NAME_MAX], tmp[NAME_MAX];
-	GSList *lst;
 
 	strcpy( fixed, filename );
 	vfsFixDOSName( fixed );
-	g_strdown( fixed );
+	STR_DOWN( fixed );
 
-	for ( lst = g_pakFiles; lst != NULL; lst = g_slist_next( lst ) )
+	for (int i = 0; i < g_pakFileCount; i++)
 	{
-		VFS_PAKFILE* file = (VFS_PAKFILE*)lst->data;
+		VFS_PAKFILE* file = g_pakFiles[i];
 
 		if ( strcmp( file->name, fixed ) == 0 ) {
 			count++;
@@ -296,7 +302,6 @@ int vfsGetFileCount( const char *filename ){
 int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 	int i, count = 0;
 	char tmp[NAME_MAX], fixed[NAME_MAX];
-	GSList *lst;
 
 	// filename is a full path
 	if ( index == -1 ) {
@@ -333,7 +338,7 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 	*bufferptr = NULL;
 	strcpy( fixed, filename );
 	vfsFixDOSName( fixed );
-	g_strdown( fixed );
+	STR_DOWN( fixed );
 
 	for ( i = 0; i < g_numDirs; i++ )
 	{
@@ -375,9 +380,9 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 		}
 	}
 
-	for ( lst = g_pakFiles; lst != NULL; lst = g_slist_next( lst ) )
+	for (int i =0; i < g_pakFileCount; i++)
 	{
-		VFS_PAKFILE* file = (VFS_PAKFILE*)lst->data;
+		VFS_PAKFILE* file = g_pakFiles[i];
 
 		if ( strcmp( file->name, fixed ) != 0 ) {
 			continue;

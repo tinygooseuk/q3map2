@@ -116,9 +116,6 @@ add_library(q3map2 SHARED
         )
 
 target_link_libraries(q3map2
-        ${GLIB_LDFLAGS}
-        ${GLIB_LIBRARIES}
-        ${PNG_LIBRARIES}
         ${LIBXML2_LIBRARIES}
         ${ZLIB_LIBRARIES}
         filematch

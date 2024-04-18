@@ -42,9 +42,6 @@
 #include "l_net/l_net.h"
 #include "libxml/tree.h"
 
-// utf8 conversion
-#include <glib.h>
-
 #ifdef WIN32
 HWND hwndOut = NULL;
 qboolean lookedForServer = qfalse;
@@ -294,9 +291,7 @@ void FPrintf( int flag, char *buf ){
 	}
 	node = xmlNewNode( NULL, (xmlChar*)"message" );
 	{
-		gchar* utf8 = g_locale_to_utf8( buf, -1, NULL, NULL, NULL );
-		xmlNodeSetContent( node, (xmlChar*)utf8 );
-		g_free( utf8 );
+		xmlNodeSetContent( node, (xmlChar*)buf );
 	}
 	level[0] = (int)'0' + flag;
 	level[1] = 0;
