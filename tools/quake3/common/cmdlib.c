@@ -574,7 +574,6 @@ FILE *SafeOpenWrite( const char *filename ){
 
 FILE *SafeOpenRead( const char *filename ){
 	FILE    *f;
-
 	f = fopen( filename, "rb" );
 
 	if ( !f ) {

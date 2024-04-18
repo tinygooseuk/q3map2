@@ -1018,7 +1018,7 @@ int BSPMain( int argc, char **argv ){
 
 	/* fixme: print more useful usage here */
 	if ( i != ( argc - 1 ) ) {
-		Error( "usage: q3map [options] mapfile" );
+		return Error( "usage: q3map [options] mapfile" );
 	}
 
 	/* copy source name */

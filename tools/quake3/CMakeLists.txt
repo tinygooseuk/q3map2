@@ -47,7 +47,8 @@ set(q3map2_games
         q3map2/game_xonotic.h
         )
 
-radiant_tool(q3map2
+
+add_library(q3map2 SHARED
         common/cmdlib.c common/cmdlib.h
         common/imagelib.c common/imagelib.h
         common/inout.c common/inout.h
@@ -75,6 +76,7 @@ radiant_tool(q3map2
         q3map2/convert_ase.c
         q3map2/convert_bsp.c
         q3map2/convert_map.c
+        q3map2/convert_map_unity.c
         q3map2/convert_obj.c
         q3map2/decals.c
         q3map2/exportents.c
@@ -124,6 +126,14 @@ target_link_libraries(q3map2
         mathlib
         picomodel
         )
+
+if (APPLE)
+        target_link_libraries(q3map2
+                -L/usr/local/Cellar/glib/2.80.0_2/lib;-L/usr/local/opt/gettext/lib;-lglib-2.0;-lintl
+                /usr/local/Cellar/glib/2.80.0_2/lib/libglib-2.0.dylib
+                /usr/local/lib/libpng.dylib
+        )
+endif ()
 
 add_custom_target(quake3)
 add_dependencies(quake3 q3map2)

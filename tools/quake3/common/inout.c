@@ -51,6 +51,8 @@ qboolean lookedForServer = qfalse;
 UINT wm_BroadcastCommand = -1;
 #endif
 
+extern FILE* g_OutputFile;
+
 socket_t *brdcst_socket;
 netmessage_t msg;
 
@@ -263,7 +265,13 @@ void FPrintf( int flag, char *buf ){
 	static qboolean bGotXML = qfalse;
 	char level[2];
 
-	printf( "%s", buf );
+	fprintf(stderr, "%s", buf );
+
+	if (g_OutputFile)
+	{
+		fprintf(g_OutputFile, "%s", buf );
+		fflush(g_OutputFile);
+	}
 
 	// the following part is XML stuff only.. but maybe we don't want that message to go down the XML pipe?
 	if ( flag == SYS_NOXML ) {
@@ -336,7 +344,7 @@ void Sys_Printf( const char *format, ... ){
    For abnormal program terminations
    =================
  */
-void Error( const char *error, ... ){
+int Error( const char *error, ... ){
 	char out_buffer[4096];
 	char tmp[4096];
 	va_list argptr;
@@ -359,5 +367,5 @@ void Error( const char *error, ... ){
 
 	Broadcast_Shutdown();
 
-	exit( 1 );
+	return 1;
 }

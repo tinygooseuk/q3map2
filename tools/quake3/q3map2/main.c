@@ -96,11 +96,9 @@ static void ExitQ3Map( void ){
    main()
    q3map mojo...
  */
-
 int main( int argc, char **argv ){
 	int i, r;
 	double start, end;
-
 
 	/* we want consistent 'randomness' */
 	srand( 0 );

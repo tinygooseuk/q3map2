@@ -1,0 +1,13 @@
+BUILT WITH CMAKE:
+filematch => no deps 
+l_net => ??? deps
+mathlib => ??? deps
+picomodel => ??? deps
+
+IN PATH:
+libpng
+glib
+
+IN OS:
+libxml2
+zlib
