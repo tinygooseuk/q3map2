@@ -60,7 +60,20 @@ static int maxMetaTriangles = 0;
 static int numMetaTriangles = 0;
 static metaTriangle_t       *metaTriangles = NULL;
 
+void ResetAllSurfaceMetaData( void )
+{
+	numMetaSurfaces = 0;
+	numPatchMetaSurfaces = 0;
 
+	maxMetaVerts = 0;
+	numMetaVerts = 0;
+	firstSearchMetaVert = 0;
+	metaVerts = NULL;
+
+	maxMetaTriangles = 0;
+	numMetaTriangles = 0;
+	metaTriangles = NULL;
+}
 
 /*
    ClearMetaVertexes()

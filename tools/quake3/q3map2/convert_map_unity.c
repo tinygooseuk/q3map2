@@ -41,7 +41,8 @@ DLL_EXPORT int convert_map_unity(const char* mapFile, const char* fsPath, const 
 	}
 	g_OutputFile = fopen(outputFile, "wb");
 
-    // Run!
+    // Run!	
+	ResetGlobals(); // Ewww...
 	int result = main(argPtr, args);
 
     // Close output file

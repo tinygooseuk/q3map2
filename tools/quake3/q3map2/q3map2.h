@@ -38,7 +38,7 @@
 #ifndef Q3MAP_VERSION
 #error no Q3MAP_VERSION defined
 #endif
-#define Q3MAP_MOTD      "Your map saw the pretty lights from q3map2's BFG"
+#define Q3MAP_MOTD      "Your map begins to Tremble..."
 
 
 
@@ -1531,6 +1531,9 @@ void                        InitPaths( int *argc, char **argv );
 int                         FixAASMain( int argc, char **argv );
 
 /* bsp.c */
+void 						ResetGlobals( void );
+void 						ResetAllSurfaceMetaData( void );
+
 int                         BSPMain( int argc, char **argv );
 
 /* bsp_analyze.c */
@@ -1603,6 +1606,7 @@ void                        MakeNormalVectors( vec3_t forward, vec3_t right, vec
 
 
 /* map.c */
+void						ResetMap( void );
 void                        LoadMapFile( char *filename, qboolean onlyLights, qboolean noCollapseGroups );
 int                         FindFloatPlane( vec3_t normal, vec_t dist, int numPoints, vec3_t *points );
 int                         PlaneTypeForNormal( vec3_t normal );
@@ -1611,6 +1615,7 @@ brush_t                     *FinishBrush( qboolean noCollapseGroups );
 
 
 /* portals.c */
+void 						ResetPortals( void );
 void                        MakeHeadnodePortals( tree_t *tree );
 void                        MakeNodePortal( node_t *node );
 void                        SplitNodePortals( node_t *node );
@@ -1668,6 +1673,7 @@ void                        TriangulatePatchSurface( entity_t *e, mapDrawSurface
 
 
 /* tjunction.c */
+void						ResetTJunctions( void );
 void                        FixTJunctions( entity_t *e );
 
 
@@ -1889,6 +1895,7 @@ shaderInfo_t                *ShaderInfoForShaderNull( const char *shader );
 
 
 /* bspfile_abstract.c */
+void 						ResetBspFile( void );
 void                        SetGridPoints( int n );
 void                        SetDrawVerts( int n );
 void                        IncDrawVerts();
@@ -2067,6 +2074,13 @@ Q_EXTERN qboolean lightmapFill Q_ASSIGN( qfalse );
 Q_EXTERN int metaAdequateScore Q_ASSIGN( -1 );
 Q_EXTERN int metaGoodScore Q_ASSIGN( -1 );
 Q_EXTERN float metaMaxBBoxDistance Q_ASSIGN( -1 );
+
+
+/* undefine to make plane finding use linear sort (note: really slow) */
+#define USE_HASHING
+#define PLANE_HASHES    8192
+
+extern int planehash[ PLANE_HASHES ];
 
 #if Q3MAP2_EXPERIMENTAL_SNAP_NORMAL_FIX
 // Increasing the normalEpsilon to compensate for new logic in SnapNormal(), where

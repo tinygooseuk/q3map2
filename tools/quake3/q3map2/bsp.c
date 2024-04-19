@@ -688,7 +688,120 @@ void OnlyEnts( const char *BSPFilePath ){
 	WriteBSPFile( BSPFilePath );
 }
 
+void ResetGlobals( void )
+{
+	// A bit of a hack! Reset all global vars, since we can run multiple times now rather than being a 
+	// fire-and-forget run of an executable.
 
+	// This is nasty, but necessary.
+	ResetBspFile();
+	ResetAllSurfaceMetaData();
+	ResetMap();
+	ResetPortals();
+	ResetTJunctions();
+
+// /* general */
+ 	numImages =( 0 );
+
+ 	numPicoModels =( 0 );
+ 	numShaderInfo =( 0 );
+ 	numVertexRemaps =( 0 );
+ 	numCustSurfaceParms =( 0 );
+
+// /* bsp */
+	numMapEntities = ( 0 );
+	mapEntityNum = ( 0 );
+	entitySourceBrushes =  0;
+
+	mapplanes = NULL;
+	nummapplanes = ( 0 );                    /* nummapplanes will always be even */
+	allocatedmapplanes = ( 0 );
+	numMapPatches = 0;
+	
+	mapMins[0] = mapMins[1] = mapMins[2] = (0);
+	mapMaxs[0] = mapMaxs[1] = mapMaxs[2] = (0);
+	
+	defaultFogNum = ( -1 );                  /* ydnar: cleaner fog handling */
+	numMapFogs = ( 0 );
+
+ 	mapEnt = NULL;
+ 	buildBrush = NULL;
+	
+ 	numActiveBrushes = 0;
+ 	g_bBrushPrimit = 0;
+
+ 	numStrippedLights = ( 0 );
+
+// /* surface stuff */
+	mapDrawSurfs = ( NULL );
+	numMapDrawSurfs = 0;
+
+	for (int i = 0; i < NUM_SURFACE_TYPES; i++)
+	{
+		numSurfacesByType[i] = 0;
+	}
+	numClearedSurfaces = 0;
+	numStripSurfaces = 0;
+	numMaxAreaSurfaces = 0;
+	numFanSurfaces = 0;
+	numMergedSurfaces = 0;
+	numMergedVerts = 0;
+
+	numRedundantIndexes = 0;
+
+	numSurfaceModels = ( 0 );
+
+ 	skyboxPresent = ( qfalse );
+ 	skyboxArea = ( -1 );
+	
+	numEntities = ( 0 );
+	numBSPEntities = ( 0 );
+	allocatedEntities = ( 0 );
+	entities = ( NULL );
+
+	numBSPModels = ( 0 );
+	allocatedBSPModels = ( 0 );
+	bspModels = ( NULL );
+
+	numBSPShaders = ( 0 );
+	allocatedBSPShaders = ( 0 );
+	bspShaders = ( 0 );
+
+	bspEntDataSize = ( 0 );
+	allocatedBSPEntData = ( 0 );
+	bspEntData = NULL;
+
+	numBSPLeafs = ( 0 );
+	numBSPPlanes = ( 0 );
+	
+	numBSPNodes = ( 0 );
+	allocatedBSPNodes = ( 0 );
+	bspNodes = ( NULL );
+
+	numBSPLeafSurfaces = ( 0 );
+	numBSPLeafBrushes = ( 0 );
+	numBSPBrushes = ( 0 );
+	numBSPBrushSides = ( 0 );
+
+	numBSPLightBytes = ( 0 );
+	bspLightBytes = ( NULL );
+
+	numBSPGridPoints = ( 0 );
+	bspGridPoints = ( NULL );
+
+	numBSPVisBytes = ( 0 );
+	
+	numBSPDrawVerts = ( 0 );
+	bspDrawVerts = ( NULL );
+
+	numBSPDrawIndexes = ( 0 );
+	allocatedBSPDrawIndexes = ( 0 );
+	bspDrawIndexes = ( NULL );
+
+	numBSPDrawSurfaces = ( 0 );
+	numBSPFogs = ( 0 );	
+	numBSPAds = ( 0 );
+}
 
 /*
    BSPMain() - ydnar

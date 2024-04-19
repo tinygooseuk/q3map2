@@ -1,6 +1,10 @@
 #!/bin/zsh
-PROJ_PATH=~/Unity/TrembleFPS
-TREMBLE_PLUGINS_PATH=$PROJ_PATH/Assets/Tremble/Editor/Plugins
+PROJ_PATH=~/Unity/ChumpParty_UVCS
+TREMBLE_PLUGINS_PATH=$PROJ_PATH/Assets/ThirdParty/Tremble/Editor/Plugins
+
+echo Kill Unity
+killall Unity
+killall HotReload
 
 echo Building ARM64...
 mkdir -p build_arm

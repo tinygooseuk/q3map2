@@ -40,10 +40,6 @@
 
 /* FIXME: remove these vars */
 
-/* undefine to make plane finding use linear sort (note: really slow) */
-#define USE_HASHING
-#define PLANE_HASHES    8192
-
 int planehash[ PLANE_HASHES ];
 
 int c_boxbevels;
@@ -52,6 +48,19 @@ int c_areaportals;
 int c_detail;
 int c_structural;
 
+void ResetMap( void )
+{
+	for (int i = 0; i < PLANE_HASHES; i++)
+	{
+		planehash[i] = 0;
+	}
+
+	c_boxbevels = 0;
+	c_edgebevels = 0;
+	c_areaportals = 0;
+	c_detail = 0;
+	c_structural = 0;
+}	
 
 
 /*
@@ -342,7 +351,7 @@ int FindFloatPlane( vec3_t innormal, vec_t dist, int numPoints, vec3_t *points )
 			p = &mapplanes[pidx];
 
 			/* do standard plane compare */
-			if ( !PlaneEqual( p, normal, dist ) ) {
+			if (p == NULL || !PlaneEqual( p, normal, dist ) ) {
 				continue;
 			}
 

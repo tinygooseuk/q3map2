@@ -1,3 +1,4 @@
+echo *** THIS IS THE WRONG PATH ***
 set PROJ_PATH=S:\Code\Unity\TrembleFPS
 set TREMBLE_PLUGINS_PATH=%PROJ_PATH%\Assets\Tremble\Editor\Plugins
 
@@ -19,3 +20,5 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake ^
 echo %TREMBLE_PLUGINS_PATH%
 
 cd ..
+
+echo *** THIS WAS THE WRONG PATH ***

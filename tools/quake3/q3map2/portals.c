@@ -47,6 +47,9 @@ int c_peak_portals;
 int c_boundary;
 int c_boundary_sides;
 
+int c_areas;
+
+
 /*
    ===========
    AllocPortal
@@ -116,6 +119,20 @@ qboolean PortalPassable( portal_t *p ){
 
 int c_tinyportals;
 int c_badportals;       /* ydnar */
+int c_outside;
+int c_inside;
+int c_solid;
+
+void ResetPortals( void )
+{
+	c_tinyportals = 0;
+	c_badportals = 0;
+
+	c_outside = 0;
+	c_inside = 0;
+	c_solid = 0;
+	c_areas = 0;
+}
 
 /*
    =============
@@ -781,7 +798,7 @@ int FloodEntities( tree_t *tree ){
    =========================================================
  */
 
-int c_areas;
+// int c_areas; // moved up
 
 
 
@@ -961,9 +978,9 @@ void FloodAreas( tree_t *tree ){
 
 //======================================================
 
-int c_outside;
-int c_inside;
-int c_solid;
+// int c_outside; // moved up
+// int c_inside; // moved up
+// int c_solid; // moved up
 
 void FillOutside_r( node_t *node ){
 	if ( node->planenum != PLANENUM_LEAF ) {

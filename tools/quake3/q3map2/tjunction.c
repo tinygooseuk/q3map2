@@ -76,12 +76,32 @@ int c_degenerateEdges;
 int c_addedVerts;
 int c_totalVerts;
 
+int c_broken;
+
 int c_natural, c_rotate, c_cant;
 
 // these should be whatever epsilon we actually expect,
 // plus SNAP_INT_TO_FLOAT
 #define LINE_POSITION_EPSILON   0.25
 #define POINT_ON_LINE_EPSILON   0.25
+
+void ResetTJunctions( void )
+{
+	numOriginalEdges = 0;
+	numEdgeLines = 0;
+	c_addedVerts = 0;
+	c_totalVerts = 0;
+	c_natural = 0;
+	c_rotate = 0;
+	c_cant = 0;
+	c_broken = 0;
+	c_degenerateEdges = 0;
+	c_addedVerts = 0;
+	c_totalVerts = 0;
+	c_natural = 0;
+	c_rotate = 0;
+	c_cant = 0;
+}
 
 /*
    ====================
@@ -509,7 +529,7 @@ extern void SnapWeldVector( vec3_t a, vec3_t b, vec3_t out );
 
 #define DEGENERATE_EPSILON  0.1
 
-int c_broken = 0;
+// int c_broken = 0; // moved up
 
 qboolean FixBrokenSurface( mapDrawSurface_t *ds ){
 	bspDrawVert_t   *dv1, *dv2, avg;

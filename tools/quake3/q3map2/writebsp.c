@@ -177,6 +177,9 @@ void EmitLeaf( node_t *node ){
 
 	leaf_p->numBSPLeafBrushes = numBSPLeafBrushes - leaf_p->firstBSPLeafBrush;
 
+	leaf_p->firstBSPLeafSurface = 0;
+	leaf_p->numBSPLeafSurfaces = 0;
+
 	/* emit leaf surfaces */
 	if ( node->opaque ) {
 		return;

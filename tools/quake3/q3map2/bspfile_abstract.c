@@ -58,6 +58,13 @@
 /* FIXME: remove the functions below that handle memory management of bsp file chunks */
 
 int numBSPDrawVertsBuffer = 0;
+int numBSPDrawSurfacesBuffer = 0;
+
+void ResetBspFile( void ){
+	numBSPDrawVertsBuffer = 0;
+	numBSPDrawSurfacesBuffer = 0;
+}
+
 void IncDrawVerts(){
 	numBSPDrawVerts++;
 
@@ -94,7 +101,6 @@ void SetDrawVerts( int n ){
 	memset( bspDrawVerts, 0, n * sizeof( bspDrawVert_t ) );
 }
 
-int numBSPDrawSurfacesBuffer = 0;
 void SetDrawSurfacesBuffer(){
 	if ( bspDrawSurfaces != 0 ) {
 		free( bspDrawSurfaces );
