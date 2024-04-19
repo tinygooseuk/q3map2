@@ -1,6 +1,5 @@
-echo *** THIS IS THE WRONG PATH ***
-set PROJ_PATH=S:\Code\Unity\TrembleFPS
-set TREMBLE_PLUGINS_PATH=%PROJ_PATH%\Assets\Tremble\Editor\Plugins
+set PROJ_PATH=S:\Code\Unity\ChumpParty_UVCS
+set TREMBLE_PLUGINS_PATH=%PROJ_PATH%\Assets\ThirdParty\Tremble\Editor\Plugins
 
 set VCPKG_ROOT=C:\Users\joe\Desktop\vcpkg
 set VS_ROOT=C:\Program Files\Microsoft Visual Studio\2022\Community
@@ -20,5 +19,3 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake ^
 echo %TREMBLE_PLUGINS_PATH%
 
 cd ..
-
-echo *** THIS WAS THE WRONG PATH ***
