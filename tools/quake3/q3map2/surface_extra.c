@@ -66,6 +66,13 @@ surfaceExtra_t seDefault = { NULL, NULL, -1, 0, WORLDSPAWN_CAST_SHADOWS, WORLDSP
 
 
 
+void ResetSurfaceExtra( void ) {
+	numSurfaceExtras = 0;
+	maxSurfaceExtras = 0;
+	free(surfaceExtras);
+	surfaceExtras = NULL;
+}
+
 /*
    AllocSurfaceExtra()
    allocates a new extra storage

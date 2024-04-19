@@ -699,6 +699,7 @@ void ResetGlobals( void )
 	ResetMap();
 	ResetPortals();
 	ResetTJunctions();
+	ResetSurfaceExtra();
 
 // /* general */
  	numImages =( 0 );

@@ -1749,6 +1749,8 @@ void                        EmitMetaStats(); // vortex: print meta statistics ev
 
 
 /* surface_extra.c */
+void 						ResetSurfaceExtra( void );
+
 void                        SetDefaultSampleSize( int sampleSize );
 
 void                        SetSurfaceExtra( mapDrawSurface_t *ds, int num );
