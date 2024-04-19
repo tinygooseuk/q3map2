@@ -713,6 +713,7 @@ void ResetGlobals( void )
 	mapEntityNum = ( 0 );
 	entitySourceBrushes =  0;
 
+	free(mapplanes);
 	mapplanes = NULL;
 	nummapplanes = ( 0 );                    /* nummapplanes will always be even */
 	allocatedmapplanes = ( 0 );
@@ -725,6 +726,8 @@ void ResetGlobals( void )
 	numMapFogs = ( 0 );
 
  	mapEnt = NULL;
+
+	free(buildBrush);
  	buildBrush = NULL;
 	
  	numActiveBrushes = 0;
@@ -733,6 +736,7 @@ void ResetGlobals( void )
  	numStrippedLights = ( 0 );
 
 // /* surface stuff */
+	free(mapDrawSurfs);
 	mapDrawSurfs = ( NULL );
 	numMapDrawSurfs = 0;
 
@@ -757,18 +761,23 @@ void ResetGlobals( void )
 	numEntities = ( 0 );
 	numBSPEntities = ( 0 );
 	allocatedEntities = ( 0 );
+
+	free(entities);
 	entities = ( NULL );
 
 	numBSPModels = ( 0 );
 	allocatedBSPModels = ( 0 );
+	free(bspModels);
 	bspModels = ( NULL );
 
 	numBSPShaders = ( 0 );
 	allocatedBSPShaders = ( 0 );
-	bspShaders = ( 0 );
+	free(bspShaders);
+	bspShaders = ( NULL );
 
 	bspEntDataSize = ( 0 );
 	allocatedBSPEntData = ( 0 );
+	free(bspEntData);
 	bspEntData = NULL;
 
 	numBSPLeafs = ( 0 );
@@ -776,6 +785,7 @@ void ResetGlobals( void )
 	
 	numBSPNodes = ( 0 );
 	allocatedBSPNodes = ( 0 );
+	free(bspNodes);
 	bspNodes = ( NULL );
 
 	numBSPLeafSurfaces = ( 0 );
@@ -784,18 +794,22 @@ void ResetGlobals( void )
 	numBSPBrushSides = ( 0 );
 
 	numBSPLightBytes = ( 0 );
+	free(bspLightBytes);
 	bspLightBytes = ( NULL );
 
 	numBSPGridPoints = ( 0 );
+	free(bspGridPoints);
 	bspGridPoints = ( NULL );
 
 	numBSPVisBytes = ( 0 );
 	
 	numBSPDrawVerts = ( 0 );
+	free(bspDrawVerts);
 	bspDrawVerts = ( NULL );
 
 	numBSPDrawIndexes = ( 0 );
 	allocatedBSPDrawIndexes = ( 0 );
+	free(bspDrawIndexes);
 	bspDrawIndexes = ( NULL );
 
 	numBSPDrawSurfaces = ( 0 );
