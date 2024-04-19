@@ -68,10 +68,12 @@ void ResetAllSurfaceMetaData( void )
 	maxMetaVerts = 0;
 	numMetaVerts = 0;
 	firstSearchMetaVert = 0;
+	free(metaVerts);
 	metaVerts = NULL;
 
 	maxMetaTriangles = 0;
 	numMetaTriangles = 0;
+	free(metaTriangles);
 	metaTriangles = NULL;
 }
 
