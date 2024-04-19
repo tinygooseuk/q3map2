@@ -33,6 +33,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include <setjmp.h>
+
 #ifdef WIN32
 #include <direct.h>
 #include <windows.h>
@@ -339,6 +341,8 @@ void Sys_Printf( const char *format, ... ){
    For abnormal program terminations
    =================
  */
+extern jmp_buf g_ErrorHandler;
+
 int Error( const char *error, ... ){
 	char out_buffer[4096];
 	char tmp[4096];
@@ -361,6 +365,11 @@ int Error( const char *error, ... ){
 	Sys_Sleep( 1000 );
 
 	Broadcast_Shutdown();
+
+	if (g_ErrorHandler)
+	{
+		longjmp(g_ErrorHandler, 1);
+	}
 
 	return 1;
 }
