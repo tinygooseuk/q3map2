@@ -23,19 +23,7 @@
 #define __INOUT__
 
 // inout is the only stuff relying on xml, include the headers there
-#include "libxml/tree.h"
 #include "mathlib.h"
-
-// some useful xml routines
-xmlNodePtr xml_NodeForVec( vec3_t v );
-void xml_SendNode( xmlNodePtr node );
-// print a message in q3map output and send the corresponding select information down the xml stream
-// bError: do we end with an error on this one or do we go ahead?
-void xml_Select( char *msg, int entitynum, int brushnum, qboolean bError );
-// end q3map with an error message and send a point information in the xml stream
-// note: we might want to add a boolean to use this as a warning or an error thing..
-void xml_Winding( char *msg, vec3_t p[], int numpoints, qboolean die );
-void xml_Point( char *msg, vec3_t pt );
 
 extern qboolean bNetworkBroadcast;
 void Broadcast_Setup( const char *dest );
@@ -50,13 +38,5 @@ void Broadcast_Shutdown();
 extern qboolean verbose;
 void Sys_Printf( const char *text, ... );
 void Sys_FPrintf( int flag, const char *text, ... );
-
-#ifdef _DEBUG
-#define DBG_XML 1
-#endif
-
-#ifdef DBG_XML
-void DumpXML();
-#endif
 
 #endif

@@ -61,7 +61,6 @@ add_library(q3map2 SHARED
         common/scriplib.c common/scriplib.h
         common/surfaceflags.h
         common/threads.c
-        common/unzip.c common/unzip.h
         common/vfs.c common/vfs.h
 
         q3map2/brush.c
@@ -116,8 +115,6 @@ add_library(q3map2 SHARED
         )
 
 target_link_libraries(q3map2
-        ${LIBXML2_LIBRARIES}
-        ${ZLIB_LIBRARIES}
         filematch
         l_net
         mathlib

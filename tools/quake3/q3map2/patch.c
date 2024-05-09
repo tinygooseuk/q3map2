@@ -328,7 +328,6 @@ void ParsePatch( qboolean onlyLights ){
 
 	/* warn and select degenerate patch */
 	if ( degenerate ) {
-		xml_Select( "degenerate patch", mapEnt->mapEntityNum, entitySourceBrushes, qfalse );
 		free( m.verts );
 		return;
 	}

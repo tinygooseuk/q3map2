@@ -36,6 +36,9 @@
 #if defined ( __linux__ ) || defined ( __APPLE__ )
 #include <dirent.h>
 #include <unistd.h>
+#ifndef PATH_MAX
+#define PATH_MAX 260
+#endif
 #else
 #include <wtypes.h>
 #include <io.h>

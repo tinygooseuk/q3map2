@@ -354,8 +354,6 @@ winding_t *WindingFromDrawSurf( mapDrawSurface_t *ds ){
 		for ( i = 0 ; i < max ; i++ ) {
 			VectorCopy( ds->verts[i].xyz, p[i] );
 		}
-
-		xml_Winding( "WindingFromDrawSurf failed: MAX_POINTS_ON_WINDING exceeded", p, max, qtrue );
 	}
 
 	w = AllocWinding( ds->numVerts );

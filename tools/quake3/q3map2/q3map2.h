@@ -1625,7 +1625,7 @@ qboolean                    PortalPassable( portal_t *p );
 #define FLOODENTITIES_LEAKED 1
 #define FLOODENTITIES_GOOD 0
 #define FLOODENTITIES_EMPTY -1
-int                     FloodEntities( tree_t *tree );
+int                     	FloodEntities( tree_t *tree );
 void                        FillOutside( node_t *headnode );
 void                        FloodAreas( tree_t *tree );
 face_t                      *VisibleFaces( entity_t *e, tree_t *tree );
@@ -1635,7 +1635,7 @@ void                        MakeTreePortals( tree_t *tree );
 
 
 /* leakfile.c */
-xmlNodePtr                  LeakFile( tree_t *tree, const char *lineFilePath );
+void                  		LeakFile( tree_t *tree, const char *lineFilePath );
 
 
 /* prtfile.c */

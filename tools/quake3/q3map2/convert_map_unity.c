@@ -14,12 +14,14 @@
 #define DLL_EXPORT
 #endif
 
-FILE* g_OutputFile = NULL;
+typedef void (*OutputFunc)(const char* text);
+OutputFunc g_OutputFunc = NULL;
+
 jmp_buf g_ErrorHandler;
 
 int main(int argc, char** argv);
 
-DLL_EXPORT int convert_map_unity(const char* mapFile, const char* fsPath, const char* outputFile, const char** inArgs, int inArgsCount)
+DLL_EXPORT int convert_map_unity(const char* mapFile, const char* fsPath, OutputFunc outputFunc, const char** inArgs, int inArgsCount)
 {
 	int result = setjmp(g_ErrorHandler);
 	if (result != 0)
@@ -44,23 +46,12 @@ DLL_EXPORT int convert_map_unity(const char* mapFile, const char* fsPath, const 
 
 	args[argPtr++] = mapFile;
 
-	// Create output file
-	if (g_OutputFile)
-	{
-		fclose(g_OutputFile);
-		g_OutputFile = NULL;
-	}
-	g_OutputFile = fopen(outputFile, "wb");
+	// Create output handler
+	g_OutputFunc = outputFunc;
 
     // Run!	
 	ResetGlobals(); // Ewww...
 	result = main(argPtr, args);
 
-    // Close output file
-	if (g_OutputFile)
-	{
-		fclose(g_OutputFile);
-		g_OutputFile = NULL;
-	}
 	return result;
 }

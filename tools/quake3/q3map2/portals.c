@@ -546,10 +546,6 @@ void MakeTreePortals_r( node_t *node ){
 	for ( i = 0 ; i < 3 ; i++ )
 	{
 		if ( node->mins[i] < MIN_WORLD_COORD || node->maxs[i] > MAX_WORLD_COORD ) {
-			if ( node->portals && node->portals->winding ) {
-				xml_Winding( "WARNING: Node With Unbounded Volume", node->portals->winding->p, node->portals->winding->numpoints, qfalse );
-			}
-
 			break;
 		}
 	}
@@ -770,10 +766,6 @@ int FloodEntities( tree_t *tree ){
 				tripcount = tree->outside_node.occupied;
 			}
 		}
-	}
-
-	if ( tripped ) {
-		xml_Select( "Entity leaked", e->mapEntityNum, 0, qfalse );
 	}
 
 	Sys_FPrintf( SYS_VRB, "%9d flooded leafs\n", c_floodedleafs );

@@ -271,7 +271,6 @@ void ProcessWorldModel( const char *portalFilePath, const char *lineFilePath ){
 	tree_t      *tree;
 	face_t      *faces;
 	qboolean ignoreLeaks, leaked;
-	xmlNodePtr polyline, leaknode;
 	char level[ 2 ], shader[ 1024 ];
 	const char  *value;
 	int leakStatus;
@@ -343,14 +342,10 @@ void ProcessWorldModel( const char *portalFilePath, const char *lineFilePath ){
 		Sys_FPrintf( SYS_NOXML, "**********************\n" );
 		Sys_FPrintf( SYS_NOXML, "******* leaked *******\n" );
 		Sys_FPrintf( SYS_NOXML, "**********************\n" );
-		polyline = LeakFile( tree, lineFilePath );
-		leaknode = xmlNewNode( NULL, (xmlChar*)"message" );
-		xmlNodeSetContent( leaknode, (xmlChar*)"MAP LEAKED\n" );
-		xmlAddChild( leaknode, polyline );
+	
 		level[0] = (int) '0' + SYS_ERR;
 		level[1] = 0;
-		xmlSetProp( leaknode, (xmlChar*)"level", (xmlChar*) &level );
-		xml_SendNode( leaknode );
+	
 		if ( leaktest ) {
 			Sys_Printf( "--- MAP LEAKED, ABORTING LEAKTEST ---\n" );
 			exit( 0 );
@@ -1146,7 +1141,8 @@ int BSPMain( int argc, char **argv ){
 
 	/* fixme: print more useful usage here */
 	if ( i != ( argc - 1 ) ) {
-		return Error( "usage: q3map [options] mapfile" );
+		Error( "usage: q3map [options] mapfile" );
+		return 1;
 	}
 
 	/* copy source name */

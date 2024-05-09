@@ -518,7 +518,6 @@ void SetBrushContents( brush_t *b ){
 
 	/* check for detail & structural */
 	if ( ( compileFlags & C_DETAIL ) && ( compileFlags & C_STRUCTURAL ) ) {
-		xml_Select( "Mixed detail and structural (defaulting to structural)", mapEnt->mapEntityNum, entitySourceBrushes, qfalse );
 		compileFlags &= ~C_DETAIL;
 	}
 
@@ -612,9 +611,6 @@ void AddBrushBevels( void ){
 
 			if ( i == buildBrush->numsides ) {
 				// add a new side
-				if ( buildBrush->numsides == MAX_BUILD_SIDES ) {
-					xml_Select( "MAX_BUILD_SIDES", buildBrush->entityNum, buildBrush->brushNum, qtrue );
-				}
 				memset( s, 0, sizeof( *s ) );
 				buildBrush->numsides++;
 				VectorClear( normal );
@@ -743,9 +739,6 @@ void AddBrushBevels( void ){
 					//%	Sys_Printf( "n = %f %f %f\n", normal[ 0 ], normal[ 1 ], normal[ 2 ] );
 
 					// add this plane
-					if ( buildBrush->numsides == MAX_BUILD_SIDES ) {
-						xml_Select( "MAX_BUILD_SIDES", buildBrush->entityNum, buildBrush->brushNum, qtrue );
-					}
 					s2 = &buildBrush->sides[buildBrush->numsides];
 					buildBrush->numsides++;
 					memset( s2, 0, sizeof( *s2 ) );
@@ -1046,11 +1039,6 @@ static void ParseRawBrush( qboolean onlyLights ){
 		}
 		UnGetToken();
 
-		/* test side count */
-		if ( buildBrush->numsides >= MAX_BUILD_SIDES ) {
-			xml_Select( "MAX_BUILD_SIDES", buildBrush->entityNum, buildBrush->brushNum, qtrue );
-		}
-
 		/* add side */
 		side = &buildBrush->sides[ buildBrush->numsides ];
 		memset( side, 0, sizeof( *side ) );
@@ -1214,7 +1202,6 @@ qboolean RemoveDuplicateBrushPlanes( brush_t *b ){
 
 		// check for a degenerate plane
 		if ( sides[i].planenum == -1 ) {
-			xml_Select( "degenerate plane", b->entityNum, b->brushNum, qfalse );
 			// remove it
 			for ( k = i + 1 ; k < b->numsides ; k++ ) {
 				sides[k - 1] = sides[k];
@@ -1227,7 +1214,6 @@ qboolean RemoveDuplicateBrushPlanes( brush_t *b ){
 		// check for duplication and mirroring
 		for ( j = 0 ; j < i ; j++ ) {
 			if ( sides[i].planenum == sides[j].planenum ) {
-				xml_Select( "duplicate plane", b->entityNum, b->brushNum, qfalse );
 				// remove the second duplicate
 				for ( k = i + 1 ; k < b->numsides ; k++ ) {
 					sides[k - 1] = sides[k];
@@ -1239,7 +1225,6 @@ qboolean RemoveDuplicateBrushPlanes( brush_t *b ){
 
 			if ( sides[i].planenum == ( sides[j].planenum ^ 1 ) ) {
 				// mirror plane, brush is invalid
-				xml_Select( "mirrored plane", b->entityNum, b->brushNum, qfalse );
 				return qfalse;
 			}
 		}

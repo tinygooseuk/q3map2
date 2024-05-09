@@ -71,16 +71,11 @@ typedef struct
 // =============================================================================
 // Global variables
 
-static unzFile  g_unzFiles[VFS_MAXFILES];
-static int  g_unzFileCount = 0;
-static VFS_PAKFILE*  g_pakFiles[VFS_MAXFILES];
-static int  g_pakFileCount = 0;
-
 static char g_strDirs[VFS_MAXDIRS][PATH_MAX + 1];
 static int g_numDirs;
 char g_strForbiddenDirs[VFS_MAXDIRS][PATH_MAX + 1];
 int g_numForbiddenDirs = 0;
-static qboolean g_bUsePak = qtrue;
+static qboolean g_bUsePak = qfalse;
 
 // =============================================================================
 // Static functions
@@ -110,56 +105,6 @@ static void vfsFixDOSName( char *src ){
 
 //!\todo Define globally or use heap-allocated string.
 #define NAME_MAX 255
-
-static void vfsInitPakFile( const char *filename ){
-	unz_global_info gi;
-	unzFile uf;
-	uint32_t i;
-	int err;
-
-	uf = unzOpen( filename );
-	if ( uf == NULL ) {
-		return;
-	}
-
-	g_unzFiles[g_unzFileCount++] = uf;
-
-	err = unzGetGlobalInfo( uf,&gi );
-	if ( err != UNZ_OK ) {
-		return;
-	}
-	unzGoToFirstFile( uf );
-
-	for ( i = 0; i < gi.number_entry; i++ )
-	{
-		char filename_inzip[NAME_MAX];
-		unz_file_info file_info;
-		VFS_PAKFILE* file;
-
-		err = unzGetCurrentFileInfo( uf, &file_info, filename_inzip, sizeof( filename_inzip ), NULL, 0, NULL, 0 );
-		if ( err != UNZ_OK ) {
-			break;
-		}
-
-		file = (VFS_PAKFILE*)safe_malloc( sizeof( VFS_PAKFILE ) );
-		g_pakFiles[g_pakFileCount++] = file;
-
-		vfsFixDOSName( filename_inzip );
-		STR_DOWN( filename_inzip );
-
-		file->name = strdup( filename_inzip );
-		file->size = file_info.uncompressed_size;
-		file->zipfile = uf;
-		memcpy( &file->zipinfo, uf, sizeof( unz_s ) );
-
-		if ( ( i + 1 ) < gi.number_entry ) {
-			err = unzGoToNextFile( uf );
-			if ( err != UNZ_OK ) {
-				break;
-			}
-		}
-	}
-}
 
 // =============================================================================
 // Global functions
@@ -200,76 +145,11 @@ void vfsInitDirectory( const char *path ){
 	vfsFixDOSName( g_strDirs[g_numDirs] );
 	vfsAddSlash( g_strDirs[g_numDirs] );
 	g_numDirs++;
-
-	if ( g_bUsePak ) {
-		dir = opendir( path );
-
-		if ( dir != NULL ) {
-			struct dirent* d = NULL;
-			while ((d = readdir(dir)) != NULL)
-			{
-				const char* name = d->d_name;
-				if ( name == NULL ) {
-					break;
-				}
-
-				for ( j = 0; j < g_numForbiddenDirs; ++j )
-				{
-					const char *p = strrchr( name, '/' );
-					p = ( p ? ( p + 1 ) : name );
-					if ( matchpattern( p, g_strForbiddenDirs[j], qtrue ) ) {
-						break;
-					}
-				}
-				if ( j < g_numForbiddenDirs ) {
-					continue;
-				}
-
-				dirlist = strdup( name );
-
-				{
-					char *ext = strrchr( dirlist, '.' );
-
-					if ( ext && !Q_stricmp( ext, ".pk3dir" ) ) {
-						if ( g_numDirs == VFS_MAXDIRS ) {
-							continue;
-						}
-						snprintf( g_strDirs[g_numDirs], PATH_MAX, "%s/%s", path, name );
-						g_strDirs[g_numDirs][PATH_MAX] = '\0';
-						vfsFixDOSName( g_strDirs[g_numDirs] );
-						vfsAddSlash( g_strDirs[g_numDirs] );
-						++g_numDirs;
-					}
-
-					if ( ( ext == NULL ) || ( Q_stricmp( ext, ".pk3" ) != 0 ) ) {
-						continue;
-					}
-				}
-
-				sprintf( filename, "%s/%s", path, dirlist );
-				vfsInitPakFile( filename );
-			}
-			closedir( dir );
-		}
-	}
 }
 
 // frees all memory that we allocated
 void vfsShutdown(){
-	while ( g_unzFileCount > 0)
-	{
-		unzClose( (unzFile)g_unzFiles[g_unzFileCount-1] );
-		g_unzFileCount--;
-	}
 
-	while ( g_pakFileCount > 0 )
-	{
-		VFS_PAKFILE* file = g_pakFiles[g_pakFileCount-1];
-		free( file->name );
-		free( file );
-
-		g_pakFileCount--;
-	}
 }
 
 // return the number of files that match
@@ -280,15 +160,6 @@ int vfsGetFileCount( const char *filename ){
 	strcpy( fixed, filename );
 	vfsFixDOSName( fixed );
 	STR_DOWN( fixed );
-
-	for (int i = 0; i < g_pakFileCount; i++)
-	{
-		VFS_PAKFILE* file = g_pakFiles[i];
-
-		if ( strcmp( file->name, fixed ) == 0 ) {
-			count++;
-		}
-	}
 
 	for ( i = 0; i < g_numDirs; i++ )
 	{
@@ -382,38 +253,6 @@ int vfsLoadFile( const char *filename, void **bufferptr, int index ){
 
 			count++;
 		}
-	}
-
-	for (int i =0; i < g_pakFileCount; i++)
-	{
-		VFS_PAKFILE* file = g_pakFiles[i];
-
-		if ( strcmp( file->name, fixed ) != 0 ) {
-			continue;
-		}
-
-		if ( count == index ) {
-			memcpy( file->zipfile, &file->zipinfo, sizeof( unz_s ) );
-
-			if ( unzOpenCurrentFile( file->zipfile ) != UNZ_OK ) {
-				return -1;
-			}
-
-			*bufferptr = safe_malloc( file->size + 1 );
-			// we need to end the buffer with a 0
-			( (char*) ( *bufferptr ) )[file->size] = 0;
-
-			i = unzReadCurrentFile( file->zipfile, *bufferptr, file->size );
-			unzCloseCurrentFile( file->zipfile );
-			if ( i < 0 ) {
-				return -1;
-			}
-			else{
-				return file->size;
-			}
-		}
-
-		count++;
 	}
 
 	return -1;
