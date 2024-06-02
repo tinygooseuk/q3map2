@@ -86,10 +86,11 @@ char *Q_strncat( char *dst, size_t dlen, const char *src, size_t slen ) {
  */
 
 static void ExitQ3Map( void ){
-	BSPFilesCleanup();
-	if ( mapDrawSurfs != NULL ) {
-		free( mapDrawSurfs );
-	}
+	// This crashes under macOS... commenting out for now
+	// BSPFilesCleanup();
+	// if ( mapDrawSurfs != NULL ) {
+	// 	free( mapDrawSurfs );
+	// }
 }
 
 /*
