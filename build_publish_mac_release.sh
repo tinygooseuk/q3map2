@@ -1,6 +1,6 @@
 #!/bin/zsh
 PROJ_PATH=~/Unity/ChumpParty_UVCS
-TREMBLE_PLUGINS_PATH=$PROJ_PATH/Assets/ThirdParty/Tremble/Editor/Plugins
+TREMBLE_PLUGINS_PATH=$PROJ_PATH/Assets/ThirdParty/Tremble/Plugins
 
 echo Kill Unity
 killall Unity
