@@ -31,10 +31,10 @@ DLL_EXPORT int convert_map_unity(const char* mapFile, const char* fsPath, Output
 	}
 
 	// Read args into array
-	char* args[1024] = {0};
-	args[0] = mapFile;
+	const char* args[1024] = {0};
+	//args[0] = mapFile;
 
-	int argPtr = 1;
+	int argPtr = 0;
 
 	args[argPtr++] = "-fs_basepath";
 	args[argPtr++] = fsPath;
@@ -51,7 +51,7 @@ DLL_EXPORT int convert_map_unity(const char* mapFile, const char* fsPath, Output
 
     // Run!	
 	ResetGlobals(); // Ewww...
-	result = main(argPtr, args);
 
+	result = main(argPtr, args);
 	return result;
 }
