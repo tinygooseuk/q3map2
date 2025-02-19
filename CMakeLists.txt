@@ -67,7 +67,6 @@ include_directories("${PROJECT_SOURCE_DIR}/libs")
 #-----------------------------------------------------------------------
 
 add_subdirectory(libs)
-add_subdirectory(include)
 
 #-----------------------------------------------------------------------
 # Tools
