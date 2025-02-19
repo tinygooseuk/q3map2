@@ -47,48 +47,6 @@
 
    ------------------------------------------------------------------------------- */
 
-/*
-   LoadDDSBuffer()
-   loads a dxtc (1, 3, 5) dds buffer into a valid rgba image
- */
-
-static void LoadDDSBuffer( byte *buffer, int size, byte **pixels, int *width, int *height ){
-	int w, h;
-	ddsPF_t pf;
-
-
-	/* dummy check */
-	if ( buffer == NULL || size <= 0 || pixels == NULL || width == NULL || height == NULL ) {
-		return;
-	}
-
-	/* null out */
-	*pixels = 0;
-	*width = 0;
-	*height = 0;
-
-	/* get dds info */
-	if ( DDSGetInfo( (ddsBuffer_t*) buffer, &w, &h, &pf ) ) {
-		Sys_Printf( "WARNING: Invalid DDS texture\n" );
-		return;
-	}
-
-	/* only certain types of dds textures are supported */
-	if ( pf != DDS_PF_ARGB8888 && pf != DDS_PF_DXT1 && pf != DDS_PF_DXT3 && pf != DDS_PF_DXT5 ) {
-		Sys_Printf( "WARNING: Only DDS texture formats ARGB8888, DXT1, DXT3, and DXT5 are supported (%d)\n", pf );
-		return;
-	}
-
-	/* create image pixel buffer */
-	*width = w;
-	*height = h;
-	*pixels = safe_malloc( w * h * 4 );
-
-	/* decompress the dds texture */
-	DDSDecompress( (ddsBuffer_t*) buffer, *pixels );
-}
-
-
 
 /*
    LoadPNGBuffer()
