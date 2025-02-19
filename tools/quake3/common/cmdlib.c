@@ -33,6 +33,8 @@
 #include "inout.h"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
+
 
 #ifdef WIN32
 #include <direct.h>
