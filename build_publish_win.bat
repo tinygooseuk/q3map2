@@ -15,7 +15,7 @@ cd build_win64
 
 cmake .. -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake ^
  && "%VS_ROOT%\MSBuild\Current\Bin\MSBuild.exe" -maxcpucount:32 Q3Map2.sln ^
- && robocopy /S Debug %TREMBLE_PLUGINS_PATH% *.dll
+ && robocopy /S Debug %TREMBLE_PLUGINS_PATH%\x86_64 *.dll
 
 echo %TREMBLE_PLUGINS_PATH%
 
