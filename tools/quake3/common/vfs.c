@@ -52,19 +52,10 @@
 #include "mathlib.h"
 #include "inout.h"
 #include "vfs.h"
-#include "unzip.h"
 
 #if !defined( uint32_t )
 typedef unsigned int uint32_t;
 #endif
-
-typedef struct
-{
-	char*   name;
-	unz_s zipinfo;
-	unzFile zipfile;
-	uint32_t size;
-} VFS_PAKFILE;
 
 #define STR_DOWN(X) do { for (char* p = (X); *p; ++p) *p = tolower(*p); } while(0)
 
