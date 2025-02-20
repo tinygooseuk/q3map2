@@ -26,8 +26,8 @@
 #include "mathlib.h"
 
 extern qboolean bNetworkBroadcast;
-void Broadcast_Setup( const char *dest );
-void Broadcast_Shutdown();
+//void Broadcast_Setup( const char *dest );
+//void Broadcast_Shutdown();
 
 #define SYS_VRB 0 // verbose support (on/off)
 #define SYS_STD 1 // standard print level

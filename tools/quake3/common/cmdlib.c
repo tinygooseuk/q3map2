@@ -33,7 +33,6 @@
 #include "inout.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 
 #ifdef WIN32
@@ -41,7 +40,7 @@
 #include <windows.h>
 #endif
 
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined ( __linux__ ) || defined ( __APPLE__ ) || defined (__wasi__) || defined (__EMSCRIPTEN__)
 #include <unistd.h>
 #endif
 

@@ -1,9 +1,14 @@
 /* marker */
 #define CONVERT_MAP_UNITY_C
 
-
 /* dependencies */
 #include "q3map2.h"
+
+typedef void (*OutputFunc)(const char* text);
+OutputFunc g_OutputFunc = NULL;
+
+// Disable for WASM
+#if !defined( __EMSCRIPTEN__ ) && !defined( __wasi__ )
 
 #include <setjmp.h>
 
@@ -14,8 +19,6 @@
 #define DLL_EXPORT
 #endif
 
-typedef void (*OutputFunc)(const char* text);
-OutputFunc g_OutputFunc = NULL;
 
 jmp_buf g_ErrorHandler;
 
@@ -55,3 +58,4 @@ DLL_EXPORT int convert_map_unity(const char* mapFile, const char* fsPath, Output
 
 	return result;
 }
+#endif

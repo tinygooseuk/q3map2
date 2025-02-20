@@ -97,7 +97,12 @@ static void ExitQ3Map( void ){
    main()
    q3map mojo...
  */
-int main( int argc, char **argv ){
+#if defined( WIN32 )
+#define DLL_EXPORT __declspec(dllexport) 
+#else
+#define DLL_EXPORT
+#endif
+DLL_EXPORT int main( int argc, char **argv ){
 	int i, r;
 	double start, end;
 
@@ -124,12 +129,12 @@ int main( int argc, char **argv ){
 		}
 
 		/* -connect */
-		if ( !strcmp( argv[ i ], "-connect" ) ) {
-			argv[ i ] = NULL;
-			i++;
-			Broadcast_Setup( argv[ i ] );
-			argv[ i ] = NULL;
-		}
+		//if ( !strcmp( argv[ i ], "-connect" ) ) {
+		//	argv[ i ] = NULL;
+		//	i++;
+		//	Broadcast_Setup( argv[ i ] );
+		//	argv[ i ] = NULL;
+		//}
 
 		/* verbose */
 		else if ( !strcmp( argv[ i ], "-v" ) ) {
@@ -277,7 +282,7 @@ int main( int argc, char **argv ){
 	Sys_Printf( "%9.0f seconds elapsed\n", end - start );
 
 	/* shut down connection */
-	Broadcast_Shutdown();
+	//Broadcast_Shutdown();
 
 	/* return any error code */
 	return r;

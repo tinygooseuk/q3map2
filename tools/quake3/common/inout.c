@@ -33,7 +33,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#if !defined(__EMSCRIPTEN__) && !defined (__wasi__)
 #include <setjmp.h>
+#endif
 
 #ifdef WIN32
 #include <direct.h>
@@ -41,7 +43,6 @@
 #endif
 
 // network broadcasting
-#include "l_net/l_net.h"
 
 #ifdef WIN32
 HWND hwndOut = NULL;
@@ -53,38 +54,8 @@ typedef void (*OutputFunc)(const char* text);
 extern OutputFunc g_OutputFunc;
 
 
-socket_t *brdcst_socket;
-netmessage_t msg;
-
-qboolean verbose = qfalse;
-
-
 // in include
 #include "stream_version.h"
-
-void Broadcast_Setup( const char *dest ){
-	address_t address;
-	char sMsg[1024];
-
-	Net_Setup();
-	Net_StringToAddress( dest, &address );
-	brdcst_socket = Net_Connect( &address, 0 );
-	if ( brdcst_socket ) {
-		// send in a header
-		sprintf( sMsg, "<?xml version=\"1.0\"?><q3map_feedback version=\"" Q3MAP_STREAM_VERSION "\">" );
-		NMSG_Clear( &msg );
-		NMSG_WriteString( &msg, sMsg );
-		Net_Send( brdcst_socket, &msg );
-	}
-}
-
-void Broadcast_Shutdown(){
-	if ( brdcst_socket ) {
-		Sys_Printf( "Disconnecting\n" );
-		Net_Disconnect( brdcst_socket );
-		brdcst_socket = NULL;
-	}
-}
 
 // all output ends up through here
 void FPrintf( int flag, char *buf ){
@@ -132,7 +103,9 @@ void Sys_Printf( const char *format, ... ){
    For abnormal program terminations
    =================
  */
+#if !defined(__EMSCRIPTEN__) && !defined (__wasi__)
 extern jmp_buf g_ErrorHandler;
+#endif
 
 void Error( const char *error, ... ){
 	char out_buffer[4096];
@@ -147,7 +120,11 @@ void Error( const char *error, ... ){
 
 	FPrintf( SYS_ERR, out_buffer );
 
-	Broadcast_Shutdown();
+	//Broadcast_Shutdown();
 	
+#if !defined(__EMSCRIPTEN__) && !defined (__wasi__)
 	longjmp(g_ErrorHandler, 1);
+#else
+	exit(1);
+#endif
 }

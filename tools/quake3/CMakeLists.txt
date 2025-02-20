@@ -35,8 +35,7 @@ set(q3map2_games
         q3map2/game_xonotic.h
         )
 
-
-add_library(q3map2 SHARED
+set(q3map2_source
         common/cmdlib.c common/cmdlib.h
         common/imagelib.c common/imagelib.h
         common/inout.c common/inout.h
@@ -102,20 +101,21 @@ add_library(q3map2 SHARED
         q3map2/writebsp.c
         )
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten" OR CMAKE_SYSTEM_NAME STREQUAL "WASI")
+        add_executable(q3map2
+                ${q3map2_source}
+        )        
+else()
+        add_library(q3map2 SHARED
+                ${q3map2_source}
+        )
+endif()
+
 target_link_libraries(q3map2
         filematch
-        l_net
         mathlib
         picomodel
         )
-
-if (APPLE)
-        target_link_libraries(q3map2
-                -L/usr/local/Cellar/glib/2.80.0_2/lib;-L/usr/local/opt/gettext/lib;-lglib-2.0;-lintl
-                /usr/local/Cellar/glib/2.80.0_2/lib/libglib-2.0.dylib
-                /usr/local/lib/libpng.dylib
-        )
-endif ()
 
 if (WIN32)
 find_path(DIRENT_INCLUDE_DIRS "dirent.h")

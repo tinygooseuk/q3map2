@@ -11,6 +11,8 @@ endif ()
 # Version
 #-----------------------------------------------------------------------
 
+set(WASI_SDK_PATH "/Users/joe/wasi-sdk")
+
 # CMake 3.0+ would allow this in project()
 set(NetRadiant_VERSION_MAJOR 1)
 set(NetRadiant_VERSION_MINOR 5)
@@ -40,8 +42,19 @@ endif ()
 #-----------------------------------------------------------------------
 # Flags
 #-----------------------------------------------------------------------
+if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+    set(CMAKE_EXECUTABLE_SUFFIX ".html")  # Ensures output is an HTML file
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-strict-aliasing -fno-common")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "WASI")
+    set(CMAKE_EXECUTABLE_SUFFIX ".wasm")  # Ensures output is an HTML file
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-strict-aliasing -fno-common")
+    set(CMAKE_C_COMPILER "${WASI_SDK_PATH}/bin/clang")
+    set(CMAKE_EXE_LINKER_FLAGS "--sysroot=${WASI_SDK_PATH}/share/wasi-sysroot -Wl,--export-all -Wl,--no-entry")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   -fno-strict-aliasing -fcommon")
+else()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-strict-aliasing -fcommon")
+endif()
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-strict-aliasing -fno-exceptions -fno-rtti")
 set(CMAKE_POSITION_INDEPENDENT_CODE 1)
 

@@ -33,7 +33,7 @@
 
 // to get PATH_MAX
 #include <stdio.h>
-#if defined ( __linux__ ) || defined ( __APPLE__ )
+#if defined ( __linux__ ) || defined ( __APPLE__ ) || defined (__EMSCRIPTEN__) || defined (__wasi__)
 #include <dirent.h>
 #include <unistd.h>
 #ifndef PATH_MAX

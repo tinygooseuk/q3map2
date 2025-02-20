@@ -1005,7 +1005,7 @@ typedef enum
 }
 surfaceType_t;
 
-char            *surfaceTypes[ NUM_SURFACE_TYPES ]
+extern char            *surfaceTypes[ NUM_SURFACE_TYPES ]
 #ifndef MAIN_C
 ;
 #else
