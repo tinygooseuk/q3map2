@@ -63,7 +63,7 @@ jobs:
         
     - name: Build q3map2 (Linux/macOS)
       if: runner.os != 'Windows'
-      run: cmake --build build --target q3map2 --config ${{ matrix.build_type }}
+      run: cmake --build build --target q3map2
 
     - name: Build q3map2 (Windows)
       if: runner.os == 'Windows'
@@ -74,7 +74,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: q3map2-windows
-        path: build/tools/quake3/*.dll
+        path: build/Release/*.dll
 
     - name: Upload Build Artifacts (Linux)
       if: runner.os == 'Linux'
