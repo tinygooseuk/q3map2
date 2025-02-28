@@ -22,6 +22,11 @@ jobs:
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
+            arch: arm64
+          - os: macos-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+            arch: x86_64
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
@@ -36,7 +41,8 @@ jobs:
         sudo apt-get update -y || brew update
         sudo apt-get install -y cmake make clang || true
 
-    - name: Configure CMake
+    - name: Configure CMake (Linux/Windows)
+      if: runner.os != 'macOS'
       run: >
         cmake -B build
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
@@ -44,6 +50,16 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -S ${{ github.workspace }}
 
+    - name: Configure CMake (macOS)
+      if: runner.os == 'macOS'
+      run: >
+        cmake -B build
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }}
+        -S ${{ github.workspace }}
+        
     - name: Build q3map2 (Linux/macOS)
       if: runner.os != 'Windows'
       run: cmake --build build --target q3map2 --config ${{ matrix.build_type }}
@@ -66,9 +82,44 @@ jobs:
         name: q3map2-linux
         path: build/tools/quake3/*.so
 
-    - name: Upload Build Artifacts (macOS)
-      if: runner.os == 'macOS'
+    - name: Upload Build Artifacts (macOS ARM64)
+      if: runner.os == 'macOS' && matrix.arch == 'arm64'
       uses: actions/upload-artifact@v4
       with:
-        name: q3map2-macos
+        name: q3map2-macos-arm64
         path: build/tools/quake3/*.dylib
+
+    - name: Upload Build Artifacts (macOS x86_64)
+      if: runner.os == 'macOS' && matrix.arch == 'x86_64'
+      uses: actions/upload-artifact@v4
+      with:
+        name: q3map2-macos-x86_64
+        path: build/tools/quake3/*.dylib
+
+  merge-macos:
+    needs: build  # This waits for the macOS builds to finish
+    runs-on: macos-latest
+    steps:
+    - name: Download macOS ARM64 dylib
+      uses: actions/download-artifact@v4
+      with:
+        name: q3map2-macos-arm64
+        path: arm64
+
+    - name: Download macOS x86_64 dylib
+      uses: actions/download-artifact@v4
+      with:
+        name: q3map2-macos-x86_64
+        path: x86_64
+
+    - name: Merge dylibs with lipo
+      run: |
+        mkdir -p universal
+        lipo -create arm64/*.dylib x86_64/*.dylib -output universal/q3map2.dylib
+        lipo -info universal/q3map2.dylib  # Verify it contains both architectures
+
+    - name: Upload Universal macOS dylib
+      uses: actions/upload-artifact@v4
+      with:
+        name: q3map2-macos-universal
+        path: universal/q3map2.dylib
