@@ -5,4 +5,6 @@ This program takes an idTech3-style  /.map/ file and spits out a /.bsp/ file sui
 Modified by Tiny Goose for the Tremble Unity Asset.
 Changes:
 - Add support for "Valve 220" format maps.
-- Remove dependency on WebP (we only use PNG)
+- Remove dependency on WebP, libpng, libz, glib, and various other libs
+- Strip a lot of unused functionality
+- Output a DLL instead of executable
