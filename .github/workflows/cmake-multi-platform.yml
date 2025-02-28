@@ -57,18 +57,18 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: q3map2-windows
-        path: tools/quake3/*.dll
+        path: build/tools/quake3/*.dll
 
     - name: Upload Build Artifacts (Linux)
       if: runner.os == 'Linux'
       uses: actions/upload-artifact@v4
       with:
         name: q3map2-linux
-        path: tools/quake3/*.so
+        path: build/tools/quake3/*.so
 
     - name: Upload Build Artifacts (macOS)
       if: runner.os == 'macOS'
       uses: actions/upload-artifact@v4
       with:
         name: q3map2-macos
-        path: tools/quake3/*.dylib
+        path: build/tools/quake3/*.dylib
