@@ -97,30 +97,36 @@ jobs:
         name: q3map2-macos-x86_64
         path: build/tools/quake3/*.dylib
 
-  merge-macos:
-    needs: build  # This waits for the macOS builds to finish
-    runs-on: macos-latest
+  make-plugins:
+    needs: build  # This waits for the build to finish
+    runs-on: linux-latest
     steps:
     - name: Download macOS ARM64 dylib
       uses: actions/download-artifact@v4
       with:
         name: q3map2-macos-arm64
-        path: arm64
-
+        path: Plugins/ARM64
+        
     - name: Download macOS x86_64 dylib
       uses: actions/download-artifact@v4
       with:
         name: q3map2-macos-x86_64
-        path: x86_64
+        path: Plugins/x86_64
+        
+    - name: Download Windows x86_64 dll
+      uses: actions/download-artifact@v4
+      with:
+        name: q3map2-windows
+        path: Plugins/x86_64
 
-    - name: Merge dylibs with lipo
-      run: |
-        mkdir -p universal
-        lipo -create arm64/*.dylib x86_64/*.dylib -output universal/q3map2.dylib
-        lipo -info universal/q3map2.dylib  # Verify it contains both architectures
+    - name: Download Linux x86_64 dylib
+      uses: actions/download-artifact@v4
+      with:
+        name: q3map2-linux
+        path: Plugins/x86_64
 
-    - name: Upload Universal macOS dylib
+    - name: Upload Plugins folder
       uses: actions/upload-artifact@v4
       with:
-        name: q3map2-macos-universal
-        path: universal/q3map2.dylib
+        name: plugins-all
+        path: Plugins/*
