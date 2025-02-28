@@ -1,0 +1,53 @@
+name: CMake Build on Multiple Platforms
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        build_type: [Release]
+        include:
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+          - os: macos-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+          - os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install Dependencies (Linux/macOS)
+      if: runner.os != 'Windows'
+      run: |
+        sudo apt-get update -y || brew update
+        sudo apt-get install -y cmake make clang || true
+
+    - name: Configure CMake
+      run: >
+        cmake -B build
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -S ${{ github.workspace }}
+
+    - name: Build q3map2 (Linux/macOS)
+      if: runner.os != 'Windows'
+      run: cmake --build build --target q3map2 --config ${{ matrix.build_type }}
+
+    - name: Build q3map2 (Windows)
+      if: runner.os == 'Windows'
+      run: cmake --build build --target q3map2 --config ${{ matrix.build_type }}
