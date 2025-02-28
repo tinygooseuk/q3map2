@@ -7,7 +7,7 @@
  * under the MIT license.  For all details and documentation, see
  * https://github.com/tronkko/dirent
  */
-#ifndef DIRENT_H
+#if !defined(DIRENT_H) && defined(WIN32)
 #define DIRENT_H
 
 /*
