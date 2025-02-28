@@ -1,4 +1,4 @@
-name: CMake Build on Multiple Platforms
+name: Build libq3map2 Windows, Mac, Linux
 
 on:
   push:
@@ -51,3 +51,24 @@ jobs:
     - name: Build q3map2 (Windows)
       if: runner.os == 'Windows'
       run: cmake --build build --target q3map2 --config ${{ matrix.build_type }}
+
+    - name: Upload Build Artifacts (Windows)
+      if: runner.os == 'Windows'
+      uses: actions/upload-artifact@v4
+      with:
+        name: q3map2-windows
+        path: tools/quake3/*.dll
+
+    - name: Upload Build Artifacts (Linux)
+      if: runner.os == 'Linux'
+      uses: actions/upload-artifact@v4
+      with:
+        name: q3map2-linux
+        path: tools/quake3/*.so
+
+    - name: Upload Build Artifacts (macOS)
+      if: runner.os == 'macOS'
+      uses: actions/upload-artifact@v4
+      with:
+        name: q3map2-macos
+        path: tools/quake3/*.dylib
