@@ -44,7 +44,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+
+#if WIN32
+#include <dirent_windows.h> 
+#else
 #include <dirent.h> 
+#endif
 
 
 #include "cmdlib.h"
