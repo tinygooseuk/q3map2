@@ -117,11 +117,6 @@ target_link_libraries(q3map2
         picomodel
         )
 
-if (WIN32)
-find_path(DIRENT_INCLUDE_DIRS "dirent.h")
-include_directories(${DIRENT_INCLUDE_DIRS})
-endif ()
-
 add_custom_target(quake3)
 add_dependencies(quake3 q3map2)
 
