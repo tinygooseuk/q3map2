@@ -128,5 +128,5 @@ jobs:
     - name: Upload Plugins folder
       uses: actions/upload-artifact@v4
       with:
-        name: plugins-all
+        name: Plugins
         path: Plugins/**
